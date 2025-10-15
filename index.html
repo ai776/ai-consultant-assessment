@@ -20,23 +20,29 @@
             import { getAuth } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
             import { getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-            const firebaseConfig = {
-                apiKey: "REDACTED_API_KEY",
-                authDomain: "sa31-2020.firebaseapp.com",
-                projectId: "sa31-2020",
-                storageBucket: "sa31-2020.firebasestorage.app",
-                messagingSenderId: "399186497325",
-                appId: "1:399186497325:web:75a923df7fdea0822ecda4",
-            };
+            let firebaseConfig;
 
-            // Firebaseを初期化
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
-            const db = getFirestore(app);
+            try {
+                ({ firebaseConfig } = await import("./js/firebase-config.js"));
+            } catch (error) {
+                console.warn(
+                    "Firebase設定ファイル(js/firebase-config.js)が見つかりません。認証・保存機能は無効化されます。",
+                    error
+                );
+            }
 
-            // グローバルに公開
-            window.firebaseAuth = auth;
-            window.firebaseDb = db;
+            if (firebaseConfig?.apiKey) {
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+
+                // グローバルに公開
+                window.firebaseAuth = auth;
+                window.firebaseDb = db;
+            } else {
+                window.firebaseAuth = null;
+                window.firebaseDb = null;
+            }
         </script>
     </head>
     <body>
