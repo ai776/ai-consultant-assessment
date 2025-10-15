@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AIコンサルタント認定診断 | 定義・役割・IT/DXとの違いをチェック</title>
+        <meta
+            name="description"
+            content="10問でAIコンサルタントの定義・役割・IT/DXとの違いを診断。100点満点で理解度を可視化し、次の学習ステップを提案します。"
+        />
+        <link rel="stylesheet" href="style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+        <!-- Firebase SDK -->
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+            import { getAuth } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+            import { getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+            const firebaseConfig = {
+                apiKey: "REDACTED_API_KEY",
+                authDomain: "sa31-2020.firebaseapp.com",
+                projectId: "sa31-2020",
+                storageBucket: "sa31-2020.firebasestorage.app",
+                messagingSenderId: "399186497325",
+                appId: "1:399186497325:web:75a923df7fdea0822ecda4",
+            };
+
+            // Firebaseを初期化
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+
+            // グローバルに公開
+            window.firebaseAuth = auth;
+            window.firebaseDb = db;
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <header class="header">
+                <h1>AIコンサルタント認定診断</h1>
+                <p class="subtitle">
+                    定義・役割・IT/DXとの違いを10問で総チェック
+                </p>
+            </header>
+
+            <div id="quiz-container" class="quiz-container">
+                <div id="start-screen" class="start-screen">
+                    <h2>AIコンサルタント適性をスピード診断</h2>
+                    <p class="main-description">
+                        AIコンサルタントとして欠かせない定義・役割・周辺領域の理解度を測定します。<br />わずか数分で、自分の成熟度と次の打ち手を把握しましょう。
+                    </p>
+
+                    <div class="cta-section">
+                        <button
+                            id="start-btn"
+                            class="btn btn-primary btn-large"
+                        >
+                            無料で認定チェックを開始
+                        </button>
+                        <p class="cta-note">
+                            所要時間：約1分 / 完全無料 / 10問
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    id="question-container"
+                    class="question-container"
+                    style="display: none"
+                >
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <div class="question-number">
+                        質問 <span id="current-question">1</span> /
+                        <span id="total-questions">10</span>
+                    </div>
+
+                    <div id="question-content" class="question-content">
+                        <!-- 質問内容がここに動的に挿入されます -->
+                    </div>
+
+                    <div class="navigation">
+                        <button
+                            id="prev-btn"
+                            class="btn btn-secondary"
+                            style="display: none"
+                        >
+                            ← 前の問題
+                        </button>
+                        <button id="next-btn" class="btn btn-primary">
+                            次の問題 →
+                        </button>
+                    </div>
+                </div>
+
+                <div
+                    id="result-container"
+                    class="result-container"
+                    style="display: none"
+                >
+                    <div class="result-header">
+                        <h2>認定結果</h2>
+                        <div class="score-display">
+                            <span id="total-score">0</span>点 / 100点
+                        </div>
+                    </div>
+
+                    <div class="level-display">
+                        <div class="level-character">
+                            <img
+                                id="level-character-img"
+                                src="images/beginner-character.gif"
+                                alt="レベルキャラクター"
+                            />
+                        </div>
+                        <div id="level-icon" class="level-icon"></div>
+                        <h3 id="level-title">基礎理解</h3>
+                        <p id="level-description">学習を始めたばかり</p>
+                    </div>
+
+                    <div class="advice-section">
+                        <h3>アドバイス</h3>
+                        <p id="advice-text">
+                            あなたの理解度に応じたアドバイスがここに表示されます。
+                        </p>
+                    </div>
+
+                    <div class="training-section">
+                        <h3>さらに専門性を高めたい方へ</h3>
+                        <p id="training-description">
+                            次のレベルに進むためにおすすめの講座・プログラムをご紹介します。
+                        </p>
+                        <div id="training-options" class="training-options">
+                            <!-- 研修オプションが動的に挿入されます -->
+                        </div>
+                    </div>
+
+                    <div class="book-present-section">
+                        <div class="book-present-content">
+                            <div class="book-present-icon">📚</div>
+                            <h3>特典プレゼントフォーム</h3>
+                            <p>
+                                このたびは、AIコンサルタント認定診断に挑戦いただき誠にありがとうございます。
+                            </p>
+                            <p>
+                                ご入力いただいた方には、AIコンサルタントとしての役割定義やキャリア戦略をまとめた【電子書籍：AIコンサルタント実務ガイド】をプレゼントいたします。
+                                <br />
+                                ぜひ以下のフォームにご入力のうえ、お受け取りください。
+                            </p>
+                            <a
+                                id="book-present-link"
+                                href="https://forms.gle/TNEmvBVrbdHjd43ZA"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn btn-book-present"
+                            >
+                                電子書籍を受け取る
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="retry-btn" class="btn btn-secondary">
+                            もう一度チェック
+                        </button>
+                        <button id="share-btn" class="btn btn-primary">
+                            Xでシェア
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="js/main.js"></script>
+    </body>
+</html>
